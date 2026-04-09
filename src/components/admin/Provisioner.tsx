@@ -258,27 +258,84 @@ const Provisioner = () => {
       </div>
 
       {/* API Keys */}
-      <div className="rounded-xl border border-border bg-card p-4 space-y-3">
-        <p className="font-display text-xs font-semibold text-muted-foreground uppercase tracking-wider">Your API Keys (saved locally)</p>
+      <div className="rounded-xl border border-border bg-card p-4 space-y-4">
         <div>
-          <label className="font-body text-xs text-muted-foreground">Supabase Personal Access Token</label>
-          <Input type="password" value={supaToken} onChange={e => setSupaToken(e.target.value)} placeholder="sbp_..." className="mt-1" />
+          <p className="font-display text-xs font-semibold text-muted-foreground uppercase tracking-wider">Your API Keys</p>
+          <p className="font-body text-xs text-muted-foreground mt-1">These are saved in your browser. You only need to enter them once.</p>
         </div>
-        <div>
-          <label className="font-body text-xs text-muted-foreground">Supabase Organization ID</label>
-          <Input value={supaOrg} onChange={e => setSupaOrg(e.target.value)} placeholder="org_..." className="mt-1" />
+
+        {/* Supabase Token */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <label className="font-body text-sm font-medium text-foreground">1. Supabase Access Token</label>
+            <a href="https://supabase.com/dashboard/account/tokens" target="_blank" rel="noreferrer"
+              className="font-body text-xs text-primary hover:underline">Get token →</a>
+          </div>
+          <Input type="password" value={supaToken} onChange={e => setSupaToken(e.target.value)} placeholder="sbp_..." />
+          <div className="bg-muted rounded-lg p-3 space-y-1">
+            <p className="font-body text-xs font-medium text-foreground">How to get it:</p>
+            <ol className="space-y-0.5 pl-1">
+              {["Go to supabase.com → sign in", "Click your avatar (top right) → Account", "Click Access Tokens in the left menu", "Click Generate new token → name it Pebble → copy it"].map((s,i) => (
+                <li key={i} className="font-body text-xs text-muted-foreground flex gap-1.5">
+                  <span className="text-primary font-medium shrink-0">{i+1}.</span>{s}
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
-        <div>
-          <label className="font-body text-xs text-muted-foreground">Vercel Token</label>
-          <Input type="password" value={vercelToken} onChange={e => setVercelToken(e.target.value)} placeholder="..." className="mt-1" />
+
+        {/* Supabase Org ID */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <label className="font-body text-sm font-medium text-foreground">2. Supabase Organization ID</label>
+            <a href="https://supabase.com/dashboard/org/_/general" target="_blank" rel="noreferrer"
+              className="font-body text-xs text-primary hover:underline">Find org ID →</a>
+          </div>
+          <Input value={supaOrg} onChange={e => setSupaOrg(e.target.value)} placeholder="org_..." />
+          <div className="bg-muted rounded-lg p-3 space-y-1">
+            <p className="font-body text-xs font-medium text-foreground">How to find it:</p>
+            <ol className="space-y-0.5 pl-1">
+              {["Go to supabase.com → your organization", "Click Settings in the left menu", "Copy the Organization ID (starts with org_)"].map((s,i) => (
+                <li key={i} className="font-body text-xs text-muted-foreground flex gap-1.5">
+                  <span className="text-primary font-medium shrink-0">{i+1}.</span>{s}
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
-        <div>
-          <label className="font-body text-xs text-muted-foreground">Vercel Team ID</label>
-          <Input value={vercelTeam} onChange={e => setVercelTeam(e.target.value)} placeholder="team_..." className="mt-1" />
+
+        {/* Vercel Token */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <label className="font-body text-sm font-medium text-foreground">3. Vercel Token</label>
+            <a href="https://vercel.com/account/tokens" target="_blank" rel="noreferrer"
+              className="font-body text-xs text-primary hover:underline">Get token →</a>
+          </div>
+          <Input type="password" value={vercelToken} onChange={e => setVercelToken(e.target.value)} placeholder="..." />
+          <div className="bg-muted rounded-lg p-3 space-y-1">
+            <p className="font-body text-xs font-medium text-foreground">How to get it:</p>
+            <ol className="space-y-0.5 pl-1">
+              {["Go to vercel.com → sign in", "Click your avatar → Settings", "Click Tokens in the left menu", "Click Create → name it Pebble → set No expiration → Create", "Copy the token immediately (shown only once)"].map((s,i) => (
+                <li key={i} className="font-body text-xs text-muted-foreground flex gap-1.5">
+                  <span className="text-primary font-medium shrink-0">{i+1}.</span>{s}
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
-        <div>
-          <label className="font-body text-xs text-muted-foreground">GitHub repo (pebble-site)</label>
-          <Input value={githubRepo} onChange={e => setGithubRepo(e.target.value)} className="mt-1" />
+
+        {/* Vercel Team ID */}
+        <div className="space-y-1.5">
+          <label className="font-body text-sm font-medium text-foreground">4. Vercel Team ID</label>
+          <Input value={vercelTeam} onChange={e => setVercelTeam(e.target.value)} placeholder="team_rhBJ0bWijqWrS9TSdrZaPWnW" />
+          <p className="font-body text-xs text-muted-foreground">This is your Palawan Collective team ID. You can find it in Vercel → Team Settings → General → Team ID.</p>
+        </div>
+
+        {/* GitHub repo */}
+        <div className="space-y-1.5">
+          <label className="font-body text-sm font-medium text-foreground">5. GitHub Repo</label>
+          <Input value={githubRepo} onChange={e => setGithubRepo(e.target.value)} />
+          <p className="font-body text-xs text-muted-foreground">This is the pebble-site template repo. Don't change this unless you've forked it.</p>
         </div>
       </div>
 
