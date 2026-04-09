@@ -138,6 +138,27 @@ const SiteSettings = () => {
   const [facebook, setFacebook] = useState("");
   const [privacyUrl, setPrivacyUrl] = useState("");
   const [termsUrl, setTermsUrl] = useState("");
+  const [confirmClear, setConfirmClear] = useState(false);
+  const [clearing, setClearing] = useState(false);
+
+  const handleClearAll = async () => {
+    setClearing(true);
+    try {
+      await Promise.all([
+        supabase.from("page_blocks" as any).delete().neq("id", "00000000-0000-0000-0000-000000000000"),
+        supabase.from("site_settings" as any).delete().neq("key", ""),
+        supabase.from("media_library" as any).delete().neq("id", "00000000-0000-0000-0000-000000000000"),
+        supabase.from("site_content" as any).delete().neq("id", "00000000-0000-0000-0000-000000000000"),
+      ]);
+      localStorage.removeItem("pebble_admin_auth");
+      localStorage.removeItem("checklist_dismissed");
+      toast({ title: "All data cleared", description: "Reloading..." });
+      setTimeout(() => window.location.reload(), 1200);
+    } catch {
+      toast({ title: "Error clearing data", variant: "destructive" });
+    }
+    setClearing(false);
+  };
 
   useEffect(() => {
     const c = settings.contact || {};
@@ -274,6 +295,40 @@ const SiteSettings = () => {
       </div>
 
       <Button onClick={saveInfo}>Save Settings</Button>
+
+      {/* DANGER ZONE */}
+      <div className="space-y-4 pt-6 border-t border-destructive/30">
+        <div>
+          <p className="font-body text-xs uppercase tracking-[0.15em] text-destructive">Danger Zone</p>
+          <p className="font-body text-xs text-muted-foreground mt-1">Clear all your site content and start fresh. This cannot be undone.</p>
+        </div>
+        {!confirmClear ? (
+          <Button
+            variant="outline"
+            className="border-destructive/50 text-destructive hover:bg-destructive/10 w-full"
+            onClick={() => setConfirmClear(true)}
+          >
+            🗑️ Clear All Site Data
+          </Button>
+        ) : (
+          <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-4 space-y-3">
+            <p className="font-body text-sm text-foreground font-medium">Are you sure? This will delete all your pages, blocks, and settings.</p>
+            <div className="flex gap-2">
+              <Button
+                variant="destructive"
+                className="flex-1"
+                disabled={clearing}
+                onClick={handleClearAll}
+              >
+                {clearing ? "Clearing..." : "Yes, clear everything"}
+              </Button>
+              <Button variant="outline" className="flex-1" onClick={() => setConfirmClear(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
