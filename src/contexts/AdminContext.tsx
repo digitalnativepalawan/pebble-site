@@ -75,12 +75,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const loadMedia = async () => {
-    try {
-      const { data } = await (supabase as any).from("section_media").select("*").order("sort_order");
-      if (data) setMedia(data);
-    } catch (e) {
-      console.log("Could not load section media", e);
-    }
+    // section_media table not used in pebble-site — skip silently
   };
 
   const toggleAdminMode = useCallback(() => {
