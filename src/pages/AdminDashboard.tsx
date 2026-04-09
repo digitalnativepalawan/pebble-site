@@ -20,12 +20,13 @@ import FAQBlockEditor from "@/components/admin/FAQBlockEditor";
 import ColumnsBlockEditor from "@/components/admin/ColumnsBlockEditor";
 import MediaLibrary from "@/components/admin/MediaLibrary";
 import SiteSettings from "@/components/admin/SiteSettings";
+import SiteChecklist from "@/components/admin/SiteChecklist";
 
 const DEFAULT_PAGES = ["home"];
 
 const AdminDashboard = () => {
   const { pages, loading: blocksLoading, createBlock, settings } = useBlocks();
-  const [authenticated, setAuthenticated] = useState(() => localStorage.getItem("amuma_admin_auth") === "true");
+  const [authenticated, setAuthenticated] = useState(() => localStorage.getItem("pebble_admin_auth") === "true");
   const [selectedPage, setSelectedPage] = useState("home");
   const [editingBlock, setEditingBlock] = useState<PageBlock | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -45,7 +46,7 @@ const AdminDashboard = () => {
     setShowNewPage(false);
   };
 
-  const handleSignOut = () => { localStorage.removeItem("amuma_admin_auth"); setAuthenticated(false); };
+  const handleSignOut = () => { localStorage.removeItem("pebble_admin_auth"); setAuthenticated(false); };
 
   const editorForBlock = (block: PageBlock) => {
     const props = { block, open: true, onClose: () => setEditingBlock(null) };
@@ -68,7 +69,7 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-background">
       <div className="border-b border-border bg-card">
         <div className="container max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="font-display text-2xl font-bold text-primary">{settings?.site_name?.text ? settings.site_name.text : "Site Editor"}</h1>
+          <h1 className="font-display text-2xl font-bold text-primary">{settings?.site_name?.text ? settings.site_name.text : "✏️ Edit Your Site"}</h1>
           <div className="flex items-center gap-3">
             <Link to="/" className="font-body text-sm text-primary hover:underline">← View Site</Link>
             <Button variant="outline" size="sm" onClick={handleSignOut}><LogOut className="w-4 h-4 mr-1" /> Sign Out</Button>
@@ -87,13 +88,13 @@ const AdminDashboard = () => {
           <TabsContent value="pages">
             <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8">
               <div className="space-y-2">
-                <p className="font-body text-xs uppercase tracking-[0.15em] text-muted-foreground mb-3">Pages</p>
+                <p className="font-body text-xs uppercase tracking-[0.15em] text-muted-foreground mb-3">Your Pages</p>
                 {allPages.map((page) => (
-                  <button key={page} onClick={() => setSelectedPage(page)} className={`w-full text-left px-3 py-2 rounded font-body text-sm capitalize transition-colors ${selectedPage === page ? "bg-primary text-primary-foreground" : "hover:bg-muted text-foreground"}`}>{page}</button>
+                  <button key={page} onClick={() => setSelectedPage(page)} className={`w-full text-left px-3 py-2 rounded-lg font-body text-sm capitalize transition-colors ${selectedPage === page ? "bg-primary text-primary-foreground" : "hover:bg-muted text-foreground"}`}>{page === "home" ? "🏠 Home" : page.charAt(0).toUpperCase() + page.slice(1)}</button>
                 ))}
                 {showNewPage ? (
                   <div className="flex gap-1 mt-2">
-                    <Input value={newPageName} onChange={(e) => setNewPageName(e.target.value)} placeholder="Page name" className="h-8 text-sm" onKeyDown={(e) => e.key === "Enter" && handleAddPage()} />
+                    <Input value={newPageName} onChange={(e) => setNewPageName(e.target.value)} placeholder="e.g. About, Menu, Rooms..." className="h-8 text-sm" onKeyDown={(e) => e.key === "Enter" && handleAddPage()} />
                     <Button size="sm" onClick={handleAddPage} className="h-8">Add</Button>
                   </div>
                 ) : (
@@ -104,7 +105,12 @@ const AdminDashboard = () => {
                 {blocksLoading ? (
                   <p className="font-body text-sm text-muted-foreground animate-pulse">Loading blocks...</p>
                 ) : (
-                  <BlockList pageSlug={selectedPage} onEdit={setEditingBlock} onAdd={() => setShowAddModal(true)} />
+                  <>
+                    {selectedPage === "home" && (
+                      <SiteChecklist onAddBlock={() => setShowAddModal(true)} />
+                    )}
+                    <BlockList pageSlug={selectedPage} onEdit={setEditingBlock} onAdd={() => setShowAddModal(true)} />
+                  </>
                 )}
               </div>
             </div>

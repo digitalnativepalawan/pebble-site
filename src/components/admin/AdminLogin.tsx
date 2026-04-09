@@ -42,7 +42,7 @@ const AdminLogin = ({ onAuthenticated }: Props) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (passkey === storedPasskey) {
-      localStorage.setItem("amuma_admin_auth", "true");
+      localStorage.setItem("pebble_admin_auth", "true");
       onAuthenticated();
     } else {
       setError("Incorrect passkey");

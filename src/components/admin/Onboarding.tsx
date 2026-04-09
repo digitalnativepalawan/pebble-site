@@ -189,7 +189,7 @@ const Onboarding = ({ onAuthenticated }: Props) => {
             <Button
               className="w-full"
               onClick={() => {
-                localStorage.setItem("amuma_admin_auth", "true");
+                localStorage.setItem("pebble_admin_auth", "true");
                 onAuthenticated();
               }}
             >
