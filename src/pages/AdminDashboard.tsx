@@ -21,7 +21,7 @@ import ColumnsBlockEditor from "@/components/admin/ColumnsBlockEditor";
 import MediaLibrary from "@/components/admin/MediaLibrary";
 import SiteSettings from "@/components/admin/SiteSettings";
 
-const DEFAULT_PAGES = ["home", "investment", "palawan", "pebbles", "team", "faq"];
+const DEFAULT_PAGES = ["home"];
 
 const AdminDashboard = () => {
   const { pages, loading: blocksLoading, createBlock, settings } = useBlocks();

@@ -234,7 +234,7 @@ const SiteSettings = () => {
         <div className="grid gap-3">
           <div>
             <Label className="font-body text-xs">Email</Label>
-            <Input value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} placeholder="hello@amuma.ph" />
+            <Input value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} placeholder="hello@yourbusiness.com" />
           </div>
           <div>
             <Label className="font-body text-xs">Phone</Label>
@@ -249,11 +249,11 @@ const SiteSettings = () => {
         <div className="grid gap-3">
           <div>
             <Label className="font-body text-xs">Instagram</Label>
-            <Input value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@amuma" />
+            <Input value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@yourbusiness" />
           </div>
           <div>
             <Label className="font-body text-xs">Facebook</Label>
-            <Input value={facebook} onChange={(e) => setFacebook(e.target.value)} placeholder="/amuma.retreats" />
+            <Input value={facebook} onChange={(e) => setFacebook(e.target.value)} placeholder="/yourbusiness" />
           </div>
         </div>
       </div>

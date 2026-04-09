@@ -83,7 +83,7 @@ const Onboarding = ({ onAuthenticated }: Props) => {
                 <Input
                   value={businessName}
                   onChange={(e) => setBusinessName(e.target.value)}
-                  placeholder="e.g. Amuma Retreat"
+                  placeholder="e.g. Baia Beach Resort"
                   autoFocus
                 />
               </div>
