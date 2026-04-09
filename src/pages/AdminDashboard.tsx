@@ -21,6 +21,7 @@ import ColumnsBlockEditor from "@/components/admin/ColumnsBlockEditor";
 import MediaLibrary from "@/components/admin/MediaLibrary";
 import SiteSettings from "@/components/admin/SiteSettings";
 import SiteChecklist from "@/components/admin/SiteChecklist";
+import Provisioner from "@/components/admin/Provisioner";
 
 const DEFAULT_PAGES = ["home"];
 
@@ -32,6 +33,7 @@ const AdminDashboard = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newPageName, setNewPageName] = useState("");
   const [showNewPage, setShowNewPage] = useState(false);
+  const [superAdmin] = useState(() => new URLSearchParams(window.location.search).get('superadmin') === 'palawancollective');
 
   if (!authenticated) return <AdminLogin onAuthenticated={() => setAuthenticated(true)} />;
 
@@ -83,6 +85,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="pages">Pages</TabsTrigger>
             <TabsTrigger value="media">Media Library</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
+            {superAdmin && <TabsTrigger value="launch">🚀 Launch Sites</TabsTrigger>}
           </TabsList>
 
           <TabsContent value="pages">
@@ -117,6 +120,9 @@ const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="media"><MediaLibrary /></TabsContent>
+          {superAdmin && (
+            <TabsContent value="launch" className="pt-4"><Provisioner /></TabsContent>
+          )}
           <TabsContent value="settings"><SiteSettings /></TabsContent>
         </Tabs>
       </div>
