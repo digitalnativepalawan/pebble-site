@@ -2,8 +2,8 @@ import { useBlocks } from "@/contexts/BlockContext";
 
 const Footer = () => {
   const { settings } = useBlocks();
-  const siteName = settings?.site_name || "My Site";
-  const tagline = settings?.tagline || "";
+  const siteName = typeof settings?.site_name === "object" ? (settings.site_name?.text || "My Site") : (settings?.site_name || "My Site");
+  const tagline = typeof settings?.tagline === "object" ? (settings.tagline?.text || "") : (settings?.tagline || "");
 
   return (
     <footer className="bg-background border-t border-border py-12 px-6">

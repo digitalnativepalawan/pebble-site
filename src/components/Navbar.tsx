@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const { settings } = useBlocks();
-  const siteName = settings?.site_name || "My Site";
+  const siteName = typeof settings?.site_name === "object" ? (settings.site_name?.text || "My Site") : (settings?.site_name || "My Site");
   const logo = settings?.logo_url;
 
   return (
