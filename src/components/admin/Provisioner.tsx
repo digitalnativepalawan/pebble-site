@@ -274,12 +274,11 @@ const Provisioner = () => {
           <Input type="password" value={supaToken} onChange={e => setSupaToken(e.target.value)} placeholder="sbp_..." />
           <div className="bg-muted rounded-lg p-3 space-y-1">
             <p className="font-body text-xs font-medium text-foreground">How to get it:</p>
-            <ol className="space-y-0.5 pl-1">
-              {["Go to supabase.com → sign in", "Click your avatar (top right) → Account", "Click Access Tokens in the left menu", "Click Generate new token → name it Pebble → copy it"].map((s,i) => (
-                <li key={i} className="font-body text-xs text-muted-foreground flex gap-1.5">
-                  <span className="text-primary font-medium shrink-0">{i+1}.</span>{s}
-                </li>
-              ))}
+            <ol className="space-y-0.5 pl-1 list-decimal list-inside">
+              <li className="font-body text-xs text-muted-foreground">Go to supabase.com → sign in</li>
+              <li className="font-body text-xs text-muted-foreground">Click your avatar (top right) → Account</li>
+              <li className="font-body text-xs text-muted-foreground">Click Access Tokens in the left menu</li>
+              <li className="font-body text-xs text-muted-foreground">Click Generate new token → name it Pebble → copy it</li>
             </ol>
           </div>
         </div>
@@ -294,12 +293,10 @@ const Provisioner = () => {
           <Input value={supaOrg} onChange={e => setSupaOrg(e.target.value)} placeholder="org_..." />
           <div className="bg-muted rounded-lg p-3 space-y-1">
             <p className="font-body text-xs font-medium text-foreground">How to find it:</p>
-            <ol className="space-y-0.5 pl-1">
-              {["Go to supabase.com → your organization", "Click Settings in the left menu", "Copy the Organization ID (starts with org_)"].map((s,i) => (
-                <li key={i} className="font-body text-xs text-muted-foreground flex gap-1.5">
-                  <span className="text-primary font-medium shrink-0">{i+1}.</span>{s}
-                </li>
-              ))}
+            <ol className="space-y-0.5 pl-1 list-decimal list-inside">
+              <li className="font-body text-xs text-muted-foreground">Go to supabase.com → your organization</li>
+              <li className="font-body text-xs text-muted-foreground">Click Settings in the left menu</li>
+              <li className="font-body text-xs text-muted-foreground">Copy the Organization ID (starts with org_)</li>
             </ol>
           </div>
         </div>
@@ -314,12 +311,12 @@ const Provisioner = () => {
           <Input type="password" value={vercelToken} onChange={e => setVercelToken(e.target.value)} placeholder="..." />
           <div className="bg-muted rounded-lg p-3 space-y-1">
             <p className="font-body text-xs font-medium text-foreground">How to get it:</p>
-            <ol className="space-y-0.5 pl-1">
-              {["Go to vercel.com → sign in", "Click your avatar → Settings", "Click Tokens in the left menu", "Click Create → name it Pebble → set No expiration → Create", "Copy the token immediately (shown only once)"].map((s,i) => (
-                <li key={i} className="font-body text-xs text-muted-foreground flex gap-1.5">
-                  <span className="text-primary font-medium shrink-0">{i+1}.</span>{s}
-                </li>
-              ))}
+            <ol className="space-y-0.5 pl-1 list-decimal list-inside">
+              <li className="font-body text-xs text-muted-foreground">Go to vercel.com → sign in</li>
+              <li className="font-body text-xs text-muted-foreground">Click your avatar → Settings</li>
+              <li className="font-body text-xs text-muted-foreground">Click Tokens in the left menu</li>
+              <li className="font-body text-xs text-muted-foreground">Click Create → name it Pebble → set No expiration → Create</li>
+              <li className="font-body text-xs text-muted-foreground">Copy the token immediately (shown only once)</li>
             </ol>
           </div>
         </div>
