@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { LogOut, Plus } from "lucide-react";
 import AdminLogin from "@/components/admin/AdminLogin";
 import Onboarding from "@/components/admin/Onboarding";
+import LaunchTab from "@/components/admin/LaunchTab";
 import BlockList from "@/components/admin/BlockList";
 import { useBlocks } from "@/contexts/BlockContext";
 import AddBlockModal from "@/components/admin/AddBlockModal";
@@ -87,6 +88,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="pages">Pages</TabsTrigger>
             <TabsTrigger value="media">Media Library</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
+            <TabsTrigger value="launch">🚀 Launch Sites</TabsTrigger>
           </TabsList>
 
           <TabsContent value="pages">
@@ -121,6 +123,7 @@ const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="media"><MediaLibrary /></TabsContent>
+          <TabsContent value="launch" className="pt-4"><LaunchTab /></TabsContent>
           <TabsContent value="settings"><SiteSettings /></TabsContent>
         </Tabs>
       </div>
