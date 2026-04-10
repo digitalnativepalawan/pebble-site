@@ -8,6 +8,7 @@ import { BlockProvider } from "@/contexts/BlockContext";
 import Index from "./pages/Index.tsx";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import LaunchPage from "./pages/LaunchPage.tsx";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/admin" element={<AdminDashboard />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="/launch" element={<LaunchPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

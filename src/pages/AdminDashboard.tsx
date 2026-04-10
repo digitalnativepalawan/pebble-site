@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LogOut, Plus } from "lucide-react";
 import AdminLogin from "@/components/admin/AdminLogin";
+import Onboarding from "@/components/admin/Onboarding";
 import BlockList from "@/components/admin/BlockList";
+import { useBlocks } from "@/contexts/BlockContext";
 import AddBlockModal from "@/components/admin/AddBlockModal";
 import TextBlockEditor from "@/components/admin/TextBlockEditor";
 import TableBlockEditor from "@/components/admin/TableBlockEditor";
@@ -21,21 +23,21 @@ import ColumnsBlockEditor from "@/components/admin/ColumnsBlockEditor";
 import MediaLibrary from "@/components/admin/MediaLibrary";
 import SiteSettings from "@/components/admin/SiteSettings";
 import SiteChecklist from "@/components/admin/SiteChecklist";
-import Provisioner from "@/components/admin/Provisioner";
 
 const DEFAULT_PAGES = ["home"];
 
 const AdminDashboard = () => {
-  const { pages, loading: blocksLoading, createBlock, settings } = useBlocks();
+  const { pages, loading: blocksLoading, createBlock, settings, loading } = useBlocks();
+  const needsOnboarding = authenticated && !loading && !settings?.site_name;
   const [authenticated, setAuthenticated] = useState(() => localStorage.getItem("pebble_admin_auth") === "true");
   const [selectedPage, setSelectedPage] = useState("home");
   const [editingBlock, setEditingBlock] = useState<PageBlock | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newPageName, setNewPageName] = useState("");
   const [showNewPage, setShowNewPage] = useState(false);
-  const [superAdmin] = useState(() => new URLSearchParams(window.location.search).get('superadmin') === 'palawancollective');
 
   if (!authenticated) return <AdminLogin onAuthenticated={() => setAuthenticated(true)} />;
+  if (needsOnboarding) return <Onboarding onAuthenticated={() => {}} />;
 
   const allPages = [...new Set([...DEFAULT_PAGES, ...pages])];
 
@@ -85,7 +87,6 @@ const AdminDashboard = () => {
             <TabsTrigger value="pages">Pages</TabsTrigger>
             <TabsTrigger value="media">Media Library</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
-            {superAdmin && <TabsTrigger value="launch">🚀 Launch Sites</TabsTrigger>}
           </TabsList>
 
           <TabsContent value="pages">
@@ -120,9 +121,6 @@ const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="media"><MediaLibrary /></TabsContent>
-          {superAdmin && (
-            <TabsContent value="launch" className="pt-4"><Provisioner /></TabsContent>
-          )}
           <TabsContent value="settings"><SiteSettings /></TabsContent>
         </Tabs>
       </div>
