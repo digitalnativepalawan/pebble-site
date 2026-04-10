@@ -4,12 +4,10 @@ import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LogOut, Plus } from "lucide-react";
+import { LogOut, Globe, Plus, Layout, Image, Settings, Rocket } from "lucide-react";
 import AdminLogin from "@/components/admin/AdminLogin";
-import Onboarding from "@/components/admin/Onboarding";
 import LaunchTab from "@/components/admin/LaunchTab";
 import BlockList from "@/components/admin/BlockList";
-import { useBlocks } from "@/contexts/BlockContext";
 import AddBlockModal from "@/components/admin/AddBlockModal";
 import TextBlockEditor from "@/components/admin/TextBlockEditor";
 import TableBlockEditor from "@/components/admin/TableBlockEditor";
@@ -25,11 +23,8 @@ import MediaLibrary from "@/components/admin/MediaLibrary";
 import SiteSettings from "@/components/admin/SiteSettings";
 import SiteChecklist from "@/components/admin/SiteChecklist";
 
-const DEFAULT_PAGES = ["home"];
-
 const AdminDashboard = () => {
-  const { pages, loading: blocksLoading, createBlock, settings, loading } = useBlocks();
-  const needsOnboarding = authenticated && !loading && !settings?.site_name;
+  const { pages, loading, createBlock, settings, getBlocksForPage } = useBlocks();
   const [authenticated, setAuthenticated] = useState(() => localStorage.getItem("pebble_admin_auth") === "true");
   const [selectedPage, setSelectedPage] = useState("home");
   const [editingBlock, setEditingBlock] = useState<PageBlock | null>(null);
@@ -38,9 +33,12 @@ const AdminDashboard = () => {
   const [showNewPage, setShowNewPage] = useState(false);
 
   if (!authenticated) return <AdminLogin onAuthenticated={() => setAuthenticated(true)} />;
-  if (needsOnboarding) return <Onboarding onAuthenticated={() => {}} />;
 
-  const allPages = [...new Set([...DEFAULT_PAGES, ...pages])];
+  const siteName = typeof settings?.site_name === "object"
+    ? (settings.site_name?.text || "My Site")
+    : (settings?.site_name || "My Site");
+
+  const allPages = [...new Set(["home", ...pages])];
 
   const handleAddPage = async () => {
     if (!newPageName.trim()) return;
@@ -51,7 +49,10 @@ const AdminDashboard = () => {
     setShowNewPage(false);
   };
 
-  const handleSignOut = () => { localStorage.removeItem("pebble_admin_auth"); setAuthenticated(false); };
+  const handleSignOut = () => {
+    localStorage.removeItem("pebble_admin_auth");
+    setAuthenticated(false);
+  };
 
   const editorForBlock = (block: PageBlock) => {
     const props = { block, open: true, onClose: () => setEditingBlock(null) };
@@ -70,61 +71,183 @@ const AdminDashboard = () => {
     }
   };
 
+  const homeBlocks = getBlocksForPage("home");
+  const isNewSite = homeBlocks.length === 0;
+
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b border-border bg-card">
-        <div className="container max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="font-display text-2xl font-bold text-primary">{settings?.site_name?.text ? settings.site_name.text : "✏️ Edit Your Site"}</h1>
+
+      {/* Top bar */}
+      <div className="border-b border-border bg-card sticky top-0 z-10">
+        <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link to="/" className="font-body text-sm text-primary hover:underline">← View Site</Link>
-            <Button variant="outline" size="sm" onClick={handleSignOut}><LogOut className="w-4 h-4 mr-1" /> Sign Out</Button>
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <span className="font-display text-sm font-bold text-primary">
+                {siteName.charAt(0).toUpperCase()}
+              </span>
+            </div>
+            <div>
+              <p className="font-display text-sm font-semibold text-foreground leading-none">{siteName}</p>
+              <p className="font-body text-xs text-muted-foreground">Admin Panel</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link to="/">
+              <Button variant="outline" size="sm" className="gap-1.5 font-body text-xs">
+                <Globe className="w-3.5 h-3.5" /> View Site
+              </Button>
+            </Link>
+            <Button variant="ghost" size="sm" onClick={handleSignOut} className="gap-1.5 font-body text-xs text-muted-foreground">
+              <LogOut className="w-3.5 h-3.5" /> Sign Out
+            </Button>
           </div>
         </div>
       </div>
 
-      <div className="container max-w-6xl mx-auto px-6 py-8">
+      {/* Tabs */}
+      <div className="max-w-5xl mx-auto px-6 py-6">
         <Tabs defaultValue="pages">
-          <TabsList className="mb-6">
-            <TabsTrigger value="pages">Pages</TabsTrigger>
-            <TabsTrigger value="media">Media Library</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
-            <TabsTrigger value="launch">🚀 Launch Sites</TabsTrigger>
+          <TabsList className="mb-6 h-auto p-1 gap-1">
+            <TabsTrigger value="pages" className="gap-1.5 font-body text-xs">
+              <Layout className="w-3.5 h-3.5" /> Pages
+            </TabsTrigger>
+            <TabsTrigger value="media" className="gap-1.5 font-body text-xs">
+              <Image className="w-3.5 h-3.5" /> Photos
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="gap-1.5 font-body text-xs">
+              <Settings className="w-3.5 h-3.5" /> Settings
+            </TabsTrigger>
+            <TabsTrigger value="launch" className="gap-1.5 font-body text-xs">
+              <Rocket className="w-3.5 h-3.5" /> Launch Sites
+            </TabsTrigger>
           </TabsList>
 
+          {/* PAGES TAB */}
           <TabsContent value="pages">
-            <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8">
-              <div className="space-y-2">
-                <p className="font-body text-xs uppercase tracking-[0.15em] text-muted-foreground mb-3">Your Pages</p>
-                {allPages.map((page) => (
-                  <button key={page} onClick={() => setSelectedPage(page)} className={`w-full text-left px-3 py-2 rounded-lg font-body text-sm capitalize transition-colors ${selectedPage === page ? "bg-primary text-primary-foreground" : "hover:bg-muted text-foreground"}`}>{page === "home" ? "🏠 Home" : page.charAt(0).toUpperCase() + page.slice(1)}</button>
-                ))}
-                {showNewPage ? (
-                  <div className="flex gap-1 mt-2">
-                    <Input value={newPageName} onChange={(e) => setNewPageName(e.target.value)} placeholder="e.g. About, Menu, Rooms..." className="h-8 text-sm" onKeyDown={(e) => e.key === "Enter" && handleAddPage()} />
-                    <Button size="sm" onClick={handleAddPage} className="h-8">Add</Button>
-                  </div>
-                ) : (
-                  <button onClick={() => setShowNewPage(true)} className="w-full text-left px-3 py-2 rounded font-body text-sm text-primary hover:bg-muted flex items-center gap-1"><Plus className="w-3 h-3" /> Add Page</button>
-                )}
+            {isNewSite && !loading ? (
+              /* Empty state for brand new sites */
+              <div className="text-center py-16 space-y-6">
+                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
+                  <Layout className="w-7 h-7 text-primary" />
+                </div>
+                <div>
+                  <h2 className="font-display text-xl font-bold text-foreground">Let's build your site</h2>
+                  <p className="font-body text-sm text-muted-foreground mt-1 max-w-xs mx-auto">
+                    Start by adding your first section. We recommend beginning with a cover photo and your business name.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-lg mx-auto text-left">
+                  {[
+                    { emoji: "🖼️", title: "Cover / Banner", desc: "Your main photo and headline" },
+                    { emoji: "✍️", title: "About Section", desc: "Tell your story" },
+                    { emoji: "💰", title: "Prices / Menu", desc: "Show what you offer" },
+                  ].map(s => (
+                    <button key={s.title} onClick={() => setShowAddModal(true)}
+                      className="p-4 rounded-xl border border-border hover:border-primary/40 hover:bg-primary/5 transition-all text-left">
+                      <div className="text-2xl mb-2">{s.emoji}</div>
+                      <p className="font-body text-sm font-medium text-foreground">{s.title}</p>
+                      <p className="font-body text-xs text-muted-foreground mt-0.5">{s.desc}</p>
+                    </button>
+                  ))}
+                </div>
+                <Button onClick={() => setShowAddModal(true)} className="font-display tracking-wider">
+                  + Add First Section
+                </Button>
               </div>
-              <div>
-                {blocksLoading ? (
-                  <p className="font-body text-sm text-muted-foreground animate-pulse">Loading blocks...</p>
-                ) : (
-                  <>
-                    {selectedPage === "home" && (
-                      <SiteChecklist onAddBlock={() => setShowAddModal(true)} />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8">
+                {/* Page sidebar */}
+                <div className="space-y-1">
+                  <p className="font-body text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Pages</p>
+                  {allPages.map(page => (
+                    <button key={page} onClick={() => setSelectedPage(page)}
+                      className={`w-full text-left px-3 py-2.5 rounded-lg font-body text-sm transition-colors ${
+                        selectedPage === page
+                          ? "bg-primary text-primary-foreground font-medium"
+                          : "text-foreground hover:bg-muted"
+                      }`}>
+                      {page === "home" ? "🏠 Home" : page.charAt(0).toUpperCase() + page.slice(1)}
+                    </button>
+                  ))}
+                  <div className="pt-2 border-t border-border mt-2">
+                    {showNewPage ? (
+                      <div className="space-y-2">
+                        <Input value={newPageName} onChange={e => setNewPageName(e.target.value)}
+                          placeholder="e.g. About, Menu, Rooms"
+                          className="h-8 text-sm"
+                          onKeyDown={e => e.key === "Enter" && handleAddPage()}
+                          autoFocus />
+                        <div className="flex gap-1">
+                          <Button size="sm" onClick={handleAddPage} className="flex-1 h-7 text-xs">Add</Button>
+                          <Button size="sm" variant="ghost" onClick={() => setShowNewPage(false)} className="h-7 text-xs">Cancel</Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button onClick={() => setShowNewPage(true)}
+                        className="w-full text-left px-3 py-2 rounded-lg font-body text-sm text-muted-foreground hover:text-foreground hover:bg-muted flex items-center gap-1.5 transition-colors">
+                        <Plus className="w-3.5 h-3.5" /> Add page
+                      </button>
                     )}
-                    <BlockList pageSlug={selectedPage} onEdit={setEditingBlock} onAdd={() => setShowAddModal(true)} />
-                  </>
-                )}
+                  </div>
+                </div>
+
+                {/* Block editor */}
+                <div>
+                  {loading ? (
+                    <div className="space-y-3">
+                      {[1,2,3].map(i => <div key={i} className="h-16 rounded-xl bg-muted animate-pulse" />)}
+                    </div>
+                  ) : (
+                    <>
+                      {selectedPage === "home" && (
+                        <SiteChecklist onAddBlock={() => setShowAddModal(true)} />
+                      )}
+                      <BlockList pageSlug={selectedPage} onEdit={setEditingBlock} onAdd={() => setShowAddModal(true)} />
+                    </>
+                  )}
+                </div>
               </div>
+            )}
+          </TabsContent>
+
+          {/* MEDIA TAB */}
+          <TabsContent value="media">
+            <div className="space-y-4">
+              <div>
+                <h2 className="font-display text-base font-semibold text-foreground">Photo Library</h2>
+                <p className="font-body text-sm text-muted-foreground mt-0.5">
+                  Upload photos here to use across your site. Once uploaded, you can pick them from any image block.
+                </p>
+              </div>
+              <MediaLibrary />
             </div>
           </TabsContent>
 
-          <TabsContent value="media"><MediaLibrary /></TabsContent>
-          <TabsContent value="launch" className="pt-4"><LaunchTab /></TabsContent>
-          <TabsContent value="settings"><SiteSettings /></TabsContent>
+          {/* SETTINGS TAB */}
+          <TabsContent value="settings">
+            <div className="space-y-4">
+              <div>
+                <h2 className="font-display text-base font-semibold text-foreground">Site Settings</h2>
+                <p className="font-body text-sm text-muted-foreground mt-0.5">
+                  Update your business name, colors, contact info, and more.
+                </p>
+              </div>
+              <SiteSettings />
+            </div>
+          </TabsContent>
+
+          {/* LAUNCH TAB */}
+          <TabsContent value="launch">
+            <div className="space-y-4">
+              <div>
+                <h2 className="font-display text-base font-semibold text-foreground">Launch a New Client Site</h2>
+                <p className="font-body text-sm text-muted-foreground mt-0.5">
+                  Palawan Collective internal tool — creates a new Supabase + Vercel site automatically.
+                </p>
+              </div>
+              <LaunchTab />
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
 
