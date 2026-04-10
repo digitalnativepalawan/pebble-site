@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useBlocks } from "@/contexts/BlockContext";
 
 const Footer = () => {
@@ -13,6 +14,14 @@ const Footer = () => {
         <p className="font-body text-xs text-muted-foreground mt-4">
           © {new Date().getFullYear()} {siteName}. All rights reserved.
         </p>
+        <div className="pt-4">
+          <Link
+            to="/admin"
+            className="font-body text-xs text-muted-foreground/40 hover:text-muted-foreground transition-colors"
+          >
+            Site Admin
+          </Link>
+        </div>
       </div>
     </footer>
   );
